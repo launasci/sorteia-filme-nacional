@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sorteador de Filmes</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="menu">
+      <h3>Cinema Nacional</h3>
+      <button id="sortear">Sortear Filme</button>
+    </div>
+    <p id="subtitulo"> Este projeto, além de ter caráter pedagógico para me ajudar a exercitar fundamentos da
+      programação, como
+      manipulação de
+      dados de uma API, é também uma possibilidade de divulgar filmes nacionais. Com base em um ranking de 50 filmes
+      nacionais
+      desde 1900 até os dias atuais, decidi criar uma aplicação que sorteie um filme desse ranking para quem estiver
+      procurando algo para assistir. Foi uma experiência incrível construir esse projeto e juntar duas coisas que amo:
+      programação e cinema nacional! Espero que você se divirta.</p>
+    <div id="filme">
+      <img id="poster" src="" alt="">
+      <div id="infos">
+        <h4 id="titulo"></h4>
+        <p id="nota"></p>
+        <p id="descricao"></p>
+      </div>
+
+    </div>
+  </div>
+</body>
+
+</html>
+
+<script>
+  const API_KEY = '1b509f7e3bbe5f5bb1e240e956797f2c';
+  const API_URL = `https://api.themoviedb.org/3/movie/`;
+  const MOVIES = [
+    '86320', '7347', '666', '598', '59990',
+    '836', '40096', '40423', '97989', '40823',
+    '60141', '42148', '74360', '14421', '68173',
+    '11703', '203158', '54955', '52751', '42031',
+    '60142', '56049', '86379', '79934', '67617',
+    '310569', '69335', '42234', '146904', '649733',
+    '76816', '84255', '186738', '52347', '74349',
+    '49723', '340840', '51184', '251766', '194853',
+    '254291', '329786', '67615', '194858', '28525',
+    '42167', '88730', '581686', '19147', '74441'
+  ]; // IDs dos filmes para sortear
+
+  const button = document.querySelector('#sortear');
+  const poster = document.querySelector('#poster');
+  const titulo = document.querySelector('#titulo');
+  const descricao = document.querySelector('#descricao');
+  const diretor = document.querySelector('#diretor');
+  const nota = document.querySelector('#nota');
+  const subtitulo = document.querySelector('#subtitulo')
+  const h3 = document.querySelector("h3"); // titulo inicial da pagina, não pensei em nome melhor #paz
+
+
+  button.addEventListener('click', async () => {
+    const randomIndex = Math.floor(Math.random() * MOVIES.length);
+    const movieId = MOVIES[randomIndex];
+    const movieResponse = await fetch(`${API_URL}${movieId}?api_key=${API_KEY}&language=pt-BR`);
+    const movieData = await movieResponse.json();
+    poster.src = `https://image.tmdb.org/t/p/w500${movieData.poster_path}`;
+    titulo.textContent = `${movieData.title} - ${movieData.release_date.split('-')[0]}`; // tem o titulo e ano de lançamento
+    descricao.textContent = movieData.overview ? movieData.overview : 'Infelizmente, não encontramos a descrição do filme sorteado.';
+    nota.textContent = `Nota IMDb: ${movieData.vote_average}`;
+    // diretor.textContent = `Diretor: ${movieData.credits?.crew?.find(crewMember => crewMember.job === 'Director')?.name ?? 'Desconhecido'}`;
+    // hmmm não tem diretor na API? 
+    subtitulo.innerHTML = '';
+    h3.innerHTML = '';
+
+
+  });
+
+
+</script>
+
+<style>
+  body {
+    font-family: sans-serif;
+    text-align: center;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .menu {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    background-color: #2ecc71;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  button:hover {
+    background-color: #27ae60;
+  }
+
+  #subtitulo {
+    text-align: justify;
+    line-height: 1.5;
+  }
+
+  #filme {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  #titulo {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+  }
+
+  #poster {
+    max-width: 200px;
+    height: auto;
+    margin-right: 2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+
+  #descricao {
+    text-align: justify;
+    max-width: 800px;
+    line-height: 1.5;
+    font-size: 1.2rem;
+  }
+
+  #diretor,
+  #nota,
+  #descricao {
+    margin-bottom: 0;
+    margin-left: 0.5rem;
+  }
+
+  @media screen and (min-width: 768px) {
+    #filme {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #poster {
+      max-width: 300px;
+      margin-right: 2em;
+    }
+  }
+</style>
